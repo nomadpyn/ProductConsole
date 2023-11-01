@@ -1,22 +1,61 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace productconsole.Models
 {
+    #region Public Class Order
+
+    /// <summary>
+    /// Модель данных из листа Заявки
+    /// </summary>
     public class Order
     {
-        public int Id { get; set; }
-        public int ProductId { get; set; }
-        public Product? Product { get; set; }
-        public int ClientId { get; set; }
-        public Client? Client { get; set; }
-        public int OrderNumber { get; set; }
-        public int ProductCount { get; set; }
-        public DateTime OrderDate { get; set; }
+        #region Public Fields
 
+        /// <summary>
+        /// Код заявки
+        /// </summary>
+        public int Id { get; set; }
+
+        /// <summary>
+        /// Код продукта
+        /// </summary>
+        public int ProductId { get; set; }
+
+        /// <summary>
+        /// Продукт, соответствующий ProductId
+        /// </summary>
+        public Product? Product { get; set; }
+
+        /// <summary>
+        /// Код клиента
+        /// </summary>
+        public int ClientId { get; set; }
+
+        /// <summary>
+        /// Клиент, соответствующий ClientId
+        /// </summary>
+        public Client? Client { get; set; }
+
+        /// <summary>
+        /// Номер заявки
+        /// </summary>
+        public int OrderNumber { get; set; }
+
+        /// <summary>
+        /// Количество товара в заявке
+        /// </summary>
+        public int ProductCount { get; set; }
+
+        /// <summary>
+        /// Дата заявки
+        /// </summary>
+        public DateTime OrderDate { get; set; }
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Вывод в консоль информации о заказе
+        /// </summary>
         public void WriteInfo()
         {
             try
@@ -27,8 +66,10 @@ namespace productconsole.Models
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Ошибка вывода информации о товаре");
+                Console.WriteLine("Ошибка вывода информации о заказе");
             }
         }
+        #endregion
     }
+    #endregion
 }

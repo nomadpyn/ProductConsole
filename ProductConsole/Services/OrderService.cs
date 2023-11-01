@@ -1,19 +1,54 @@
-﻿
+﻿#region Using
 using productconsole.Data;
 using productconsole.Models;
+#endregion
 
 namespace productconsole.Services
 {
+    #region Public Class OrderService
+
+    /// <summary>
+    /// Класс для работы с данными из таблицы 
+    /// </summary>
     public class OrderService
     {
+        #region Public Field
+
+        /// <summary>
+        /// True в случае, если данные загрузились и false, в обратном случае
+        /// </summary>
+        public readonly bool LoadError;
+        #endregion
+
+        #region Private Fields
+
+        /// <summary>
+        /// Экземпляр класс для доступа к данным
+        /// </summary>
         private readonly DataService dataWorker;
 
+        /// <summary>
+        /// Список товаров
+        /// </summary>
         private List<Product> products;
+
+        /// <summary>
+        /// Список клиентов
+        /// </summary>
         private List<Client> clients;
+
+        /// <summary>
+        /// Список заявок
+        /// </summary>
         private List<Order> orders;
+        #endregion
 
-        public readonly bool LoadError;
+        #region Constructor
 
+        /// <summary>
+        /// Конструктор, который принимает путь к файлу
+        /// </summary>
+        /// <param name="filePath"></param>
         public OrderService(string filePath)
         {
             dataWorker = new DataService(filePath);
@@ -22,14 +57,37 @@ namespace productconsole.Services
 
             LoadError = ChechForEmpty();
         }
+        #endregion
 
-        public List<Order> SearchClientsByProduct(string productName)
+        #region Public Methods
+
+        /// <summary>
+        /// Выводит информацию о заказах товара по наименованию товара
+        /// </summary>
+        /// <param name="productName"></param>
+        /// <returns></returns>
+        public void SearchClientsByProduct(string productName)
         {
             var data = orders.Where(x => x.Product.Name.ToLower() == productName.ToLower()).OrderBy(t => t.OrderDate).ToList();
 
-            return data == null ? new List<Order>() : data;
+            if (data !=null && data.Count > 0)
+            {
+                foreach (Order item in data)
+                {
+                    item.WriteInfo();
+                }                
+            }
+            else
+            {
+                Console.WriteLine("\nНет заказов такого продукта");
+            }
         }
-
+        
+        /// <summary>
+        /// Выполняет поиск золотого клиента, в зависимости от указанных параметров (только год или месяц и год)
+        /// </summary>
+        /// <param name="year"></param>
+        /// <param name="month"></param>
         public void SearchGoldClient(int year, int month = 0)
         {
             Dictionary<Client, int> data = new Dictionary<Client, int>();
@@ -55,7 +113,13 @@ namespace productconsole.Services
 
             GetGoldClient(data);
         }
-
+        
+        /// <summary>
+        /// Обновляет контакное лицо у организаци по id организации
+        /// </summary>
+        /// <param name="clientId"></param>
+        /// <param name="newContactPerson"></param>
+        /// <returns></returns>
         public bool UpdateClientContactPerson(int clientId, string newContactPerson)
         {
             if (clientId <= 0)
@@ -71,6 +135,9 @@ namespace productconsole.Services
             return false;
         }
 
+        /// <summary>
+        /// Вывод в консоль всех товаров из списка products
+        /// </summary>
         public void ShowAllProduct()
         {
             foreach (var item in products)
@@ -79,6 +146,9 @@ namespace productconsole.Services
             }
         }
 
+        /// <summary>
+        /// Вывод в консоль всех клиентов из списка clients
+        /// </summary>
         public void ShowAllClients()
         {
             foreach (var item in clients)
@@ -87,6 +157,9 @@ namespace productconsole.Services
             }
         }
 
+        /// <summary>
+        /// Вывод в консоль информации о всех заявках из списка orders
+        /// </summary>
         public void ShowAllOrders()
         {
             foreach (var item in orders)
@@ -94,6 +167,13 @@ namespace productconsole.Services
                 item.WriteInfo();
             }
         }
+        #endregion
+
+        #region Private Methods
+        
+        /// <summary>
+        /// Заполнение списков из данных из файла 
+        /// </summary>
         private void LoadDataFromFile()
         {
             products = dataWorker.GetProducts();
@@ -102,6 +182,10 @@ namespace productconsole.Services
 
             UpdateOrders();
         }
+        
+        /// <summary>
+        /// Сопоставление товаров и клиентов в списке заявок
+        /// </summary>
         private void UpdateOrders()
         {
             foreach (var item in orders)
@@ -113,7 +197,11 @@ namespace productconsole.Services
                 item.Client = existClient == null ? new Client() : existClient;
             }
         }
-
+        
+        /// <summary>
+        /// Выводит в консоль информацию о золотых клиентах
+        /// </summary>
+        /// <param name="data"></param>
         private void GetGoldClient(Dictionary<Client, int> data)
         {
             if (data.Count > 0)
@@ -133,7 +221,11 @@ namespace productconsole.Services
                 Console.WriteLine("Нет клиентов для отображения\n");
             }
         }
-
+        
+        /// <summary>
+        /// Проверка всех списков на пустоту, в случае если данные не загрузились или файл не существует
+        /// </summary>
+        /// <returns></returns>
         private bool ChechForEmpty()
         {
             if (products.Count == 0 && clients.Count == 0 && orders.Count == 0)
@@ -141,7 +233,7 @@ namespace productconsole.Services
             else
                 return false;
         }
-
-
+        #endregion
     }
+    #endregion
 }

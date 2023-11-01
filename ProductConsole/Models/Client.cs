@@ -1,22 +1,47 @@
-﻿using DocumentFormat.OpenXml.Office.PowerPoint.Y2021.M06.Main;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace productconsole.Models
 {
+    #region Public Class Client
+
+    /// <summary>
+    /// Модель данных из листа Клиенты
+    /// </summary>
     public class Client
     {
-        public int Id { get; set; }
-        public string? Name { get; set; }
-        public string? Address { get; set; }
-        public string? ContactPerson { get; set; }
+        #region Public Fields
 
+        /// <summary>
+        /// Код клиента
+        /// </summary>
+        public int Id { get; set; }
+
+        /// <summary>
+        /// Наименование организации
+        /// </summary>
+        public string? Name { get; set; }
+
+        /// <summary>
+        /// Адрес организации
+        /// </summary>
+        public string? Address { get; set; }
+        
+        /// <summary>
+        /// Контактное лицо
+        /// </summary>
+        public string? ContactPerson { get; set; }
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Перегрузка ToString
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return $"{this.Id} - {this.Name} - {this.ContactPerson}";
         }
+        #endregion
     }
+    #endregion
 }

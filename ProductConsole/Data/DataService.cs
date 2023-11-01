@@ -1,19 +1,45 @@
-﻿using DocumentFormat.OpenXml;
-using DocumentFormat.OpenXml.Office2010.Excel;
-using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
+﻿#region Using
+using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using productconsole.Models;
+#endregion
 
 namespace productconsole.Data
 {
+    #region Public Class DataService
+
+    /// <summary>
+    /// Класс для доступа к данным в таблице
+    /// </summary>
     public class DataService
     {
-        public string FilePath { get; set; }
+        #region Private Fields
+
+        /// <summary>
+        /// Путь к файлу xls
+        /// </summary>
+        private string FilePath { get; set; }
+        #endregion
+
+        #region Constructor
+
+        /// <summary>
+        /// Конструктор, который принимает путь к файлу
+        /// </summary>
+        /// <param name="filePath"></param>
         public DataService(string filePath)
         {
             FilePath = filePath;
         }
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Получает список товаров при подключении к таблице и при наличии в ней листа Товары, в обратном случае пустой список
+        /// </summary>
+        /// <returns></returns>
         public List<Product> GetProducts()
         {
             List<Product> products = new List<Product>();
@@ -52,6 +78,11 @@ namespace productconsole.Data
 
             return products.OrderBy(x => x.Id).ToList();
         }
+
+        /// <summary>
+        /// Получает список клиентов при подключении к таблице и при наличии в ней листа Клиенты, в обратном случае пустой список
+        /// </summary>
+        /// <returns></returns>
         public List<Client> GetClients()
         {
             List<Client> clients = new List<Client>();
@@ -88,6 +119,11 @@ namespace productconsole.Data
             catch(Exception ex) { }
             return clients.OrderBy(x => x.Id).ToList();
         }
+
+        /// <summary>
+        /// Получает список Заявок при подключении к таблице и при наличии в ней листа Заявки, в обратном случае пустой список
+        /// </summary>
+        /// <returns></returns>
         public List<Order> GetOrders()
         {
             List<Order> orders = new List<Order>();
@@ -127,6 +163,12 @@ namespace productconsole.Data
             return orders.OrderBy(x => x.Id).ToList();
         }
 
+        /// <summary>
+        /// Возвращает true в случае успешного изменения поля Контакное лицо на листе Клиенты по Коду организации
+        /// </summary>
+        /// <param name="clientId"></param>
+        /// <param name="newContact"></param>
+        /// <returns></returns>
         public bool UpdateClientContactPerson(int clientId, string newContact)
         {
             try
@@ -164,6 +206,16 @@ namespace productconsole.Data
 
             return false;
         }
+        #endregion
+
+        #region Private Methods
+
+        /// <summary>
+        /// Возвращает значение в ячейке либо пустую строку при ошибке чтения
+        /// </summary>
+        /// <param name="doc"></param>
+        /// <param name="cell"></param>
+        /// <returns></returns>
         private string GetCellValue(SpreadsheetDocument doc, Cell cell)
         {
             string? value = null;
@@ -182,6 +234,13 @@ namespace productconsole.Data
             }
             return value;
         }
+
+        /// <summary>
+        /// Получаем экземпляр класса Product из строки на листе Товары, либо пустой экземпляр в случае ошибки
+        /// </summary>
+        /// <param name="doc"></param>
+        /// <param name="row"></param>
+        /// <returns></returns>
         private Product GetProduct(SpreadsheetDocument doc, Row row)
         {
             List<string> rowValues = GetRowValues(doc,row);
@@ -206,6 +265,13 @@ namespace productconsole.Data
             return product;
 
         }
+
+        /// <summary>
+        /// Получаем экземпляр класса Client из строки на листе Клиенты, либо пустой экземпляр в случае ошибки
+        /// </summary>
+        /// <param name="doc"></param>
+        /// <param name="row"></param>
+        /// <returns></returns>
         private Client GetClient(SpreadsheetDocument doc, Row row) 
         {
             List<string>? rowValues = GetRowValues(doc, row);
@@ -229,6 +295,13 @@ namespace productconsole.Data
 
             return client;
         }
+
+        /// <summary>
+        /// Получаем экземпляр класса Order из строки на листе Заявки, либо пустой экземпляр в случае ошибки
+        /// </summary>
+        /// <param name="doc"></param>
+        /// <param name="row"></param>
+        /// <returns></returns>
         private Order GetOrder(SpreadsheetDocument doc, Row row)
         {
             List<string>? rowValues = GetRowValues(doc, row); ;
@@ -250,6 +323,13 @@ namespace productconsole.Data
             }
             return order;
         }
+        
+        /// <summary>
+        /// Получаем элементы строки в List String для дальнейшего заполнения экземляра какого либо класса
+        /// </summary>
+        /// <param name="doc"></param>
+        /// <param name="row"></param>
+        /// <returns></returns>
         private List<string> GetRowValues(SpreadsheetDocument doc, Row row)
         {
             List<string>? rowValues = new List<string>();
@@ -267,6 +347,14 @@ namespace productconsole.Data
 
             return rowValues;
         }
+        
+        /// <summary>
+        /// Нахождение адреса ячейки значения Контактное лицо по коду клиента 
+        /// </summary>
+        /// <param name="clientId"></param>
+        /// <param name="doc"></param>
+        /// <param name="row"></param>
+        /// <returns></returns>
         private string SearchAddressOfContactPerson(int clientId, SpreadsheetDocument doc, Row row)
         {
             string? cellValue = null;
@@ -286,7 +374,15 @@ namespace productconsole.Data
 
             return cellValue == null? null : cellValue.Replace('A', 'D');
         }
-
+        
+        /// <summary>
+        /// Возвращает true, в случае успешного обновления значения ячейки Контакное лицо по адресу ячейки на листе Клиенты
+        /// </summary>
+        /// <param name="address"></param>
+        /// <param name="worksheet"></param>
+        /// <param name="sd"></param>
+        /// <param name="contactPerson"></param>
+        /// <returns></returns>
         private bool UpdateContactPerson(string address, Worksheet worksheet, SpreadsheetDocument sd, string  contactPerson)
         {
             try
@@ -326,5 +422,7 @@ namespace productconsole.Data
             }
 
         }
+        #endregion
     }
+    #endregion
 }
