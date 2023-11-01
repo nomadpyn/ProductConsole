@@ -1,13 +1,34 @@
-﻿using productconsole.Models;
-
+﻿
 namespace productconsole.Services
 {
+    #region Public Class MenuService
+
+    /// <summary>
+    /// Класс для вывода информации пользователю в консоль
+    /// </summary>
     public class MenuService
     {
+        #region Private Fields
+
+        /// <summary>
+        /// Экземпляр класса OrderService 
+        /// </summary>
         private OrderService? orderService;
+        #endregion
 
+        #region Constructor
+
+        /// <summary>
+        /// Конструктор по умолчанию
+        /// </summary>
         public MenuService() { }
+        #endregion
 
+        #region Public Methods
+
+        /// <summary>
+        /// Начальный вывод данных в консоль
+        /// </summary>
         public void Start()
         {
             Console.WriteLine("Программа по работе с данными из файла Excel");
@@ -41,7 +62,13 @@ namespace productconsole.Services
             }
             while (choise.Key != ConsoleKey.D1 && choise.Key != ConsoleKey.D0);
         }
+        #endregion
 
+        #region Private Methods
+
+        /// <summary>
+        /// Уровень загрузки данных из файла
+        /// </summary>
         private void LoadLevel()
         {
             do
@@ -69,6 +96,9 @@ namespace productconsole.Services
             } while (orderService.LoadError);
         }
 
+        /// <summary>
+        /// Уровень выбора функции приложения
+        /// </summary>
         private void WorkChoiseLevel()
         {
             Console.Clear();
@@ -91,12 +121,12 @@ namespace productconsole.Services
                         }
                     case ConsoleKey.D2:
                         {
-                            ChangeContactPerson();
+                            ChangeContactPersonLevel();
                             break;
                         }
                     case ConsoleKey.D3:
                         {
-                            SearchGoldClient();
+                            SearchGoldClientLevel();
                             break;
                         }
                     case ConsoleKey.D0:
@@ -114,6 +144,9 @@ namespace productconsole.Services
             while (choise.Key != ConsoleKey.D1 && choise.Key != ConsoleKey.D0 && choise.Key != ConsoleKey.D2 && choise.Key != ConsoleKey.D3);
         }
 
+        /// <summary>
+        /// Уровень поиска заявок по наименовании продукта
+        /// </summary>
         private void SearchClientsLevel()
         {
 
@@ -124,24 +157,15 @@ namespace productconsole.Services
 
             string searchedProductName = Console.ReadLine();
 
-            var data = orderService?.SearchClientsByProduct(searchedProductName);
-
-            if (data.Count == 0)
-            {
-                Console.WriteLine("\nНет заказов такого продукта");
-            }
-            else
-            {
-                foreach (Order item in data)
-                {
-                    item.WriteInfo();
-                }
-            }
-
-            GoToUpLevel();
+            orderService?.SearchClientsByProduct(searchedProductName);
+                 
+            GoToWorkChoiseLevel();
         }
 
-        private void ChangeContactPerson()
+        /// <summary>
+        /// Уровень изменения контактного лица у клиента
+        /// </summary>
+        private void ChangeContactPersonLevel()
         {
             Console.WriteLine("Список всех организации");
 
@@ -165,10 +189,13 @@ namespace productconsole.Services
                 Console.WriteLine("Вы некорректно ввели id клиента");
             }
 
-            GoToUpLevel();
+            GoToWorkChoiseLevel();
         }
 
-        private void SearchGoldClient()
+        /// <summary>
+        /// Уровень выбора признака поиска золотого клиента
+        /// </summary>
+        private void SearchGoldClientLevel()
         {
             Console.Clear();
             ConsoleKeyInfo choise;
@@ -183,12 +210,12 @@ namespace productconsole.Services
                 {
                     case ConsoleKey.D1:
                         {
-                            SearchGoldClientByYear();
+                            SearchGoldClientByYearLevel();
                             break;
                         }
                     case ConsoleKey.D2:
                         {
-                            SearchGoldClientByMonthAndYear();
+                            SearchGoldClientByMonthAndYearLevel();
                             break;
                         }
 
@@ -202,7 +229,10 @@ namespace productconsole.Services
             while (choise.Key != ConsoleKey.D1 && choise.Key != ConsoleKey.D2);
         }
 
-        private void SearchGoldClientByYear()
+        /// <summary>
+        /// Уровень поиска золотого клиента по году
+        /// </summary>
+        private void SearchGoldClientByYearLevel()
         {
             Console.WriteLine("Введите год");
 
@@ -214,10 +244,13 @@ namespace productconsole.Services
             {
                 Console.WriteLine("Вы не корректно ввели год");
             }
-            GoToUpLevel();
+            GoToWorkChoiseLevel();
         }
 
-        private void SearchGoldClientByMonthAndYear()
+        /// <summary>
+        /// Уровень поиска золотого клиета по месяцу и году
+        /// </summary>
+        private void SearchGoldClientByMonthAndYearLevel()
         {
             Console.WriteLine("Введите год");
 
@@ -238,9 +271,13 @@ namespace productconsole.Services
             {
                 Console.WriteLine("Вы не корректно ввели год");
             }
-            GoToUpLevel();
+            GoToWorkChoiseLevel();
         }
-        private void GoToUpLevel()
+        
+        /// <summary>
+        /// Метод выбирает куда вернуться, ну уровень выбора функции или в начало программы, для возможности работы с другим файлом
+        /// </summary>
+        private void GoToWorkChoiseLevel()
         {
             ConsoleKeyInfo choise;
 
@@ -273,7 +310,9 @@ namespace productconsole.Services
             }
             while (choise.Key != ConsoleKey.D1 && choise.Key != ConsoleKey.D0);
         }
+        #endregion
     }
+    #endregion
 }
 
 
